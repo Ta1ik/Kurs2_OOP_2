@@ -1,12 +1,8 @@
 package Transport;
 
-public class Car {
-    private final String brand;
-    private final String model;
+public class Car extends Transport{
+
     private Float engineVolume;
-    private String color;
-    private final int year;
-    private final String country;
     private String transmission;
     private final String bodyType;
     private String registrationNumber;
@@ -88,77 +84,44 @@ public class Car {
         }
     }
 
+    public void changeTire() {
+        if (tireIsSummer) {
+            tireIsSummer = false;
+        } else if (!tireIsSummer) {
+            tireIsSummer = true;
+        }
+    }
 
-    public Car(String brand, String model, Float engineVolume, String color, int year, String country,
-               String transmission, String bodyType, String registrationNumber, int numberOfSeats, boolean tireIsSummer) {
-        if (brand == null || brand.isEmpty()) {
-            this.brand = "default";
-        } else {
-            this.brand = brand;
+    public void testRegistrationNumber() {
+        boolean result = (registrationNumber.length() == 9);
+        if (result) {
+            for (int i = 0; i < registrationNumber.length(); i++) {
+                char a1 = registrationNumber.charAt(i);
+                if (a1 < 'а' && i < 1 || a1 > 'я' && i < 1 || a1 < 'а' && i > 3 && i < 6 || a1 > 'я' && i > 3 && i < 6) {
+                    System.out.println("Символ под индексом: " + i + " введен некорректно.");
+                }
+                if (a1 < '0' && i >= 1 && i < 4 || a1 > '9' && i >= 1 && i < 4 || a1 < '1' && i >= 6) {
+                    System.out.println("Символ под индексом: " + i + " введен некорректно.");
+                }
+            }
         }
-        if (model == null || model.isEmpty()) {
-            this.model = "default";
-        } else {
-            this.model = model;
-        }
-        if (country == null || country.isEmpty()) {
-            this.country = "default";
-        } else {
-            this.country = country;
-        }
-        if (color == null || color.isEmpty()) {
-            this.color = "Белый";
-        } else {
-            this.color = color;
-        }
-        if (engineVolume == 0) {
-            this.engineVolume = 1.5f;
-        } else {
-            this.engineVolume = engineVolume;
-        }
-        if (year == 0) {
-            this.year = 2000;
-        } else {
-            this.year = Math.abs(year);
-        }
-        if (transmission == null || transmission.isEmpty()) {
-            this.transmission = "default";
-        } else {
-            this.transmission = transmission;
-        }
-        if (bodyType == null || transmission.isEmpty()) {
-            this.bodyType = "default";
-        } else {
-            this.bodyType = bodyType;
-        }
-        if (registrationNumber == null || registrationNumber.isEmpty()) {
-            this.registrationNumber = "default";
-        } else {
-            this.registrationNumber = registrationNumber;
-        }
-        if (numberOfSeats == 0) {
-            this.numberOfSeats = 4;
-        } else {
-            this.numberOfSeats = numberOfSeats;
-        }
+    }
+
+
+    public Car (String brand, String model, int yearOfRelease, String country, String color, int maxSpeed, float engineVolume, String transmission,
+                String bodyType, String registrationNumber, int numberOfSeats, boolean tireIsSummer) {
+        super(brand, model, yearOfRelease, country, color, maxSpeed);
+        validateFloatParameters(this.engineVolume = engineVolume);
+        validateStringParameters(this.transmission = transmission);
+        validateStringParameters(this.bodyType = bodyType);
+        validateStringParameters(this.registrationNumber = registrationNumber);
+        validateIntParameters(this.numberOfSeats = numberOfSeats);
         this.tireIsSummer = tireIsSummer;
+
     }
 
-    public String getBrand() {
-        return brand;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public String getCountry() {
-        return country;
-    }
+    public float validateFloatParameters(float value){
+        return value == 0f ? 1.5f : Math.abs(value);}
 
     public String getBodyType() {
         return bodyType;
@@ -174,14 +137,6 @@ public class Car {
 
     public void setEngineVolume(Float engineVolume) {
         this.engineVolume = engineVolume;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public void setColor(String color) {
-        this.color = color;
     }
 
     public String getTransmission() {
@@ -212,34 +167,13 @@ public class Car {
         System.out.println("________________________");
     }
 
-    public void changeTire() {
-        if (tireIsSummer) {
-            tireIsSummer = false;
-        } else if (!tireIsSummer) {
-            tireIsSummer = true;
-        }
-    }
 
-    public void testRegistrationNumber() {
-        boolean result = (registrationNumber.length() == 9);
-        if (result) {
-            for (int i = 0; i < registrationNumber.length(); i++) {
-                char a1 = registrationNumber.charAt(i);
-                if (a1 < 'а' && i < 1 || a1 > 'я' && i < 1 || a1 < 'а' && i > 3 && i < 6 || a1 > 'я' && i > 3 && i < 6) {
-                    System.out.println("Символ под индексом: " + i + " введен некорректно.");
-                }
-                if (a1 < '0' && i >= 1 && i < 4 || a1 > '9' && i >= 1 && i < 4 || a1 < '1' && i >= 6) {
-                    System.out.println("Символ под индексом: " + i + " введен некорректно.");
-                }
-            }
-        }
-    }
 
     @Override
     public String toString() {
-        return "Марка: " + brand + ", модель: " + model + ", объем двигателя: " + engineVolume + ", коробка передач: " + transmission +
-                ", тип кузова: " + bodyType + ", количество мест " + numberOfSeats + ", цвет: " + color + ",\n регистрационный номер " + registrationNumber +
-                ", год выпуска: " + year + ", страна сборки: " + country + ", резина летняя: " + tireIsSummer + ".";
+        return "Марка: " + super.getBrand() + ", модель: " + super.getModel() + ", объем двигателя: " + engineVolume + ", коробка передач: " + transmission +
+                ", тип кузова: " + bodyType + ", количество мест " + numberOfSeats + ", цвет: " + super.getColor() + ",\n регистрационный номер " + registrationNumber +
+                ", год выпуска: " + super.getYear() + ", страна сборки: " + super.getCountry() + ", резина летняя: " + tireIsSummer + ".";
     }
 
 }
