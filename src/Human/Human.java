@@ -1,7 +1,6 @@
 package Human;
 
 public class Human {
-
     private int yearOfBitrh;
     String name;
     private String town;

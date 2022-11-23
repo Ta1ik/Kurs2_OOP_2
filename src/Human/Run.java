@@ -13,7 +13,6 @@ public class Run {
         System.out.println(artem);
         Human vladimir = new Human(LocalDate.now().getYear() - 21, "Владимир", "Казань", "");
         System.out.println(vladimir);
-
     }
 
 }
