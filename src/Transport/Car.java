@@ -1,6 +1,10 @@
 package Transport;
 
-public class Car extends Transport{
+import java.util.Objects;
+
+import java.util.regex.Pattern;
+
+public class Car extends Transport {
 
     private Float engineVolume;
     private String transmission;
@@ -8,6 +12,20 @@ public class Car extends Transport{
     private String registrationNumber;
     private final int numberOfSeats;
     private boolean tireIsSummer;
+
+    @Override
+    public void refill() {
+        if(super.getRefill().equals("benzine")){
+            System.out.println("Заправляем автомобиль " + getBrand() + " " + getModel() + " бензином.");
+        } else if (super.getRefill().equals("diesel")){
+            System.out.println("Заправляем автомобиль " + getBrand() + " "  + getModel() + "  дизельным топливом.");
+        } else if (super.getRefill().equals("electro")){
+            System.out.println("Заправляем автомобиль " + getBrand() + " "  + getModel() + " на электрозаправке.");
+        } else {
+            System.out.println("Выберите правильную заправку");
+        }
+
+    }
 
     //--------вложенный класс Key
     public class Key {
@@ -44,7 +62,7 @@ public class Car extends Transport{
 
         public Insurance(float periodInsurance, float costInsurance, String numberInsurance) {
             this.periodInsurance = periodInsurance;
-            if (costInsurance == 0 && costInsurance > 0) {
+            if (costInsurance > 0) {
                 this.costInsurance = 10250.43f;
             } else {
                 this.costInsurance = costInsurance;
@@ -68,18 +86,19 @@ public class Car extends Transport{
             return numberInsurance;
         }
 
-        public void isValidInsurance(){
-            if(periodInsurance == 0 || periodInsurance < 0) {
+        public void isValidInsurance() {
+            if (periodInsurance == 0 || periodInsurance < 0) {
                 System.out.println("Ваш страховой полис закончился. Необходимо срочно оформить новый полис!");
             } else {
                 System.out.println("Срок действия вашего страхового полиса: " + periodInsurance);
             }
         }
-        public void isValidNumberInsurance(){
-            if (numberInsurance.length() == 9){
+
+        public void isValidNumberInsurance() {
+            if (numberInsurance.length() == 9) {
                 System.out.println("Номер вашего страхового полиса: " + numberInsurance);
             } else {
-                System.out.println("Номер страховки некорректный");
+                System.out.println("Номер страхового полиса некорректный");
             }
         }
     }
@@ -92,7 +111,17 @@ public class Car extends Transport{
         }
     }
 
-    public void testRegistrationNumber() {
+    public boolean testRegistrationNumber(String registrationNumber) {
+        if (Pattern.matches("[а-яА-ЯaZA-Z0-9]{9}", registrationNumber)) {
+            return true;
+        } else {
+            System.out.println("Неверно задан регистрационный номер");
+            return false;
+        }
+    }
+
+    //  Вариант №2
+    public void validateRegistrationNumber() {
         boolean result = (registrationNumber.length() == 9);
         if (result) {
             for (int i = 0; i < registrationNumber.length(); i++) {
@@ -108,20 +137,21 @@ public class Car extends Transport{
     }
 
 
-    public Car (String brand, String model, int yearOfRelease, String country, String color, int maxSpeed, float engineVolume, String transmission,
-                String bodyType, String registrationNumber, int numberOfSeats, boolean tireIsSummer) {
-        super(brand, model, yearOfRelease, country, color, maxSpeed);
-        validateFloatParameters(this.engineVolume = engineVolume);
-        validateStringParameters(this.transmission = transmission);
-        validateStringParameters(this.bodyType = bodyType);
-        validateStringParameters(this.registrationNumber = registrationNumber);
-        validateIntParameters(this.numberOfSeats = numberOfSeats);
+    public Car(String brand, String model, int yearOfRelease, String country, String color, int maxSpeed, float engineVolume, String transmission,
+               String bodyType, String registrationNumber, int numberOfSeats, boolean tireIsSummer, String refill) {
+        super(brand, model, yearOfRelease, country, color, maxSpeed, refill);
+        this.engineVolume = validateFloatParameters(engineVolume);
+        this.transmission = validateStringParameters(transmission);
+        this.bodyType = validateStringParameters(bodyType);
+        this.registrationNumber = validateStringParameters(registrationNumber);
+        this.numberOfSeats = validateNumParameters(numberOfSeats);
         this.tireIsSummer = tireIsSummer;
 
     }
 
-    public float validateFloatParameters(float value){
-        return value == 0f ? 1.5f : Math.abs(value);}
+    public float validateFloatParameters(float value) {
+        return value == 0f ? 1.5f : Math.abs(value);
+    }
 
     public String getBodyType() {
         return bodyType;
@@ -167,13 +197,24 @@ public class Car extends Transport{
         System.out.println("________________________");
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Car car = (Car) o;
+        return numberOfSeats == car.numberOfSeats && tireIsSummer == car.tireIsSummer && engineVolume.equals(car.engineVolume) && transmission.equals(car.transmission) && bodyType.equals(car.bodyType) && registrationNumber.equals(car.registrationNumber);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(engineVolume, transmission, bodyType, registrationNumber, numberOfSeats, tireIsSummer);
+    }
 
     @Override
     public String toString() {
-        return "Марка: " + super.getBrand() + ", модель: " + super.getModel() + ", объем двигателя: " + engineVolume + ", коробка передач: " + transmission +
+        return "АВТОМОБИЛЬ: Марка: " + super.getBrand() + ", модель: " + super.getModel() + ", объем двигателя: " + engineVolume + ", коробка передач: " + transmission +
                 ", тип кузова: " + bodyType + ", количество мест " + numberOfSeats + ", цвет: " + super.getColor() + ",\n регистрационный номер " + registrationNumber +
-                ", год выпуска: " + super.getYear() + ", страна сборки: " + super.getCountry() + ", резина летняя: " + tireIsSummer + ".";
+                ", год выпуска: " + super.getYear() + ", страна сборки: " + super.getCountry() + ", резина летняя: " + tireIsSummer + ", максимальная скорость " + getMaxSpeed() + " км/ч.";
     }
 
 }

@@ -1,20 +1,39 @@
 package Transport;
 
-public class Transport {
+import java.util.Objects;
+
+public abstract class Transport {
     private String brand;
     private String model;
     private final int year;
     private final String country;
     private String color;
     private int maxSpeed;
+    private String refill;
 
-    public Transport(String brand, String model, int yearOfRelease, String country, String color, int maxSpeed) {
-        validateStringParameters(this.brand = brand);
-        validateStringParameters(this.model = model);
-        validateIntParameters(this.year = yearOfRelease);
-        validateStringParameters(this.country = country);
-        validateStringParameters(this.color = color);
-        validateIntParameters(this.maxSpeed = maxSpeed);
+
+    public abstract void refill();
+
+    public String validateStringParameters(String value){
+        return value == null || value.isBlank() || value.isEmpty() ? "default" : value;
+    }
+    public int validateNumParameters(int value){
+        return value == 0 ? 0 : Math.abs(value);
+    }
+
+
+    public Transport(String brand, String model, int yearOfRelease, String country, String color, int maxSpeed, String refill) {
+        this.brand = validateStringParameters(brand);
+        this.model = validateStringParameters(model);
+        this.year = validateNumParameters(yearOfRelease);
+        this.country = validateStringParameters(country);
+        this.color = validateStringParameters(color);
+        this.maxSpeed = validateNumParameters(maxSpeed);
+        this.refill = validateStringParameters(refill);
+
+    }
+    public Transport(String brand, String model, int yearOfRelease, String country, int maxSpeed, String refill){
+        this(brand, model, yearOfRelease, country, "",  maxSpeed, refill);
     }
 
     public String getBrand() {
@@ -41,19 +60,29 @@ public class Transport {
         return maxSpeed;
     }
 
+    public String getRefill() {
+        return refill;
+    }
+
     public void setColor(String color) {
         validateStringParameters(this.color = color);
     }
 
     public void setMaxSpeed(int maxSpeed) {
-        validateIntParameters(this.maxSpeed);
+        validateNumParameters(this.maxSpeed);
     }
 
-    public String validateStringParameters(String value){
-        return value == null || !value.isBlank() || !value.isEmpty() ? "default" : value;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Transport transport = (Transport) o;
+        return year == transport.year && maxSpeed == transport.maxSpeed && brand.equals(transport.brand) && model.equals(transport.model) && country.equals(transport.country) && color.equals(transport.color) && refill.equals(transport.refill);
     }
-    public int validateIntParameters(int value){
-        return value == 0 ? 0 : Math.abs(value);
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(brand, model, year, country, color, maxSpeed, refill);
     }
 }
 
